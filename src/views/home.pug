@@ -4,14 +4,6 @@ include mixins/video
 block content
     h2 Welcome, Here you will see the trending videos 😝
     each potato in videos 
-        div 
-            h4
-                //a(href="/videos/" + videos.id)=videos.title
-                a(href=`/videos/${potato.id}`)=potato.title
-            ul
-                li #{potato.rating}/5
-                li #{potato.comment} comments.
-                li Posted #{potato.createdAt}.
-                li #{potato.views} views.
+        +video(video)
     else 
         li sorry, nothing found.
