@@ -3,8 +3,8 @@ import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 export const postJoin = async (req, res) => {
-  const { email, username, password1, password2, name, location } = req.body;
-  if (password1 !== password2) {
+  const { email, username, password, password2, name, location } = req.body;
+  if (password !== password2) {
     return res.status(400).render("join", {
       pageTitle: "Join",
       errorMessage: "Password confirmation does not match.",
@@ -21,7 +21,7 @@ export const postJoin = async (req, res) => {
     await User.create({
       email,
       username,
-      password: password2,
+      password,
       name,
       location,
     });
@@ -38,8 +38,8 @@ export const getLogin = (req, res) => {
 };
 
 export const postLogin = async (req, res) => {
-  const pageTitle = "Login";
   const { username, password } = req.body;
+  const pageTitle = "Login";
   // check if account exists
   const user = await User.findOne({ username });
   if (!user) {
@@ -56,6 +56,9 @@ export const postLogin = async (req, res) => {
       errorMessage: "Wrong Password",
     });
   }
+  req.session.loggedIn = true;
+  req.session.user = user;
+
   return res.redirect("/");
 };
 
