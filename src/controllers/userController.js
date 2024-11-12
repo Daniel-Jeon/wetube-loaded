@@ -61,8 +61,55 @@ export const postLogin = async (req, res) => {
   return res.redirect("/");
 };
 
-export const logout = (req, res) => res.send("Log out");
+export const startGithubLogin = (req, res) => {
+  const baseUrl = "https://github.com/login/oauth/authorize";
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    allow_signup: false,
+    scope: "read:user user:email",
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  return res.redirect(finalUrl);
+};
+
+export const finishGithubLogin = async (req, res) => {
+  const baseUrl = "https://github.com/login/oauth/access_token";
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    client_secret: process.env.GH_SECRET,
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  // finalUrl에 POST 요청을 보내 데이터를 받아 오고
+  const tokenRequest = await (
+    await fetch(finalUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+  ).json();
+  // json에 access_token이 있으면
+  if ("access_token" in tokenRequest) {
+    // API에 접근
+    const { access_token } = tokenRequest;
+    const userData = await (
+      await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    console.log(userData);
+  } else {
+    // 아니면 login으로 돌려보냄
+    return res.redirect("/login");
+  }
+};
 
 export const see = (req, res) => res.send("See user");
-export const edit = (req, res) => res.send("Edit User");
 export const remove = (req, res) => res.send("Remove user");
+export const logout = (req, res) => res.send("Log out");
+export const edit = (req, res) => res.send("Edit User");
