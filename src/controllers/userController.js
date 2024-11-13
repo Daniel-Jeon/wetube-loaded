@@ -141,7 +141,6 @@ export const finishGithubLogin = async (req, res) => {
   }
 };
 
-export const see = (req, res) => res.send("See user");
 export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");
@@ -153,13 +152,15 @@ export const getEdit = (req, res) => {
 export const postEdit = async (req, res) => {
   const {
     session: {
-      user: { _id },
+      user: { _id, avatarUrl },
     },
     body: { email, username, name, location },
+    file,
   } = req;
   const updateUser = await User.findByIdAndUpdate(
     _id,
     {
+      avatarUrl: file ? file.path : avatarUrl,
       email,
       username,
       name,
@@ -170,3 +171,41 @@ export const postEdit = async (req, res) => {
   req.session.user = updateUser;
   return res.redirect("/users/edit");
 };
+
+export const getChangePassword = (req, res) => {
+  if (req.session.user.socialOnly) {
+    return res.redirect("/");
+  }
+  return res.render("users/change-password", { pageTitle: "Change Title" });
+};
+
+export const postChangePassword = async (req, res) => {
+  const {
+    session: {
+      user: { _id },
+    },
+    body: { oldPassword, newPassword, newPasswordConfirm },
+  } = req;
+  const user = await User.findById(_id);
+  const ok = await bcrypt.compare(oldPassword, user.password);
+  if (!ok) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Title",
+      errorMessage: "The current password is incorrect.",
+    });
+  }
+  if (newPassword !== newPasswordConfirm) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Title",
+      errorMessage: "The password does not match the confirmation.",
+    });
+  }
+  user.password = newPassword;
+  // save()를 하면 pre save가 작동
+  // db에 저장할때 시간이 걸리므로 역시 await 사용
+  await user.save();
+  // send notification 'good job'
+  return res.redirect("/users/logout");
+};
+
+export const see = (req, res) => res.send("See user");
