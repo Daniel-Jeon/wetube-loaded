@@ -105,7 +105,6 @@ export const finishGithubLogin = async (req, res) => {
         },
       })
     ).json();
-    console.log(userData);
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {
         headers: {
@@ -116,7 +115,6 @@ export const finishGithubLogin = async (req, res) => {
     const emailObj = emailData.find(
       (email) => email.primary === true && email.verified === true
     );
-    console.log(emailObj);
     if (!emailObj) {
       // 이후 에러 notofication을 추가
       return res.redirect("login");
@@ -211,17 +209,13 @@ export const postChangePassword = async (req, res) => {
 
 export const see = async (req, res) => {
   const { id } = req.params;
-  const user = await User.findById(id);
+  const user = await User.findById(id).populate("videos");
+  console.log("see>user :", user);
   if (!user) {
     return res.status(400).render("404", { pageTitle: "User not found" });
   }
-  const videos = await Video.find({ owner: user._id }).sort({
-    createdAt: "desc",
-  });
-  console.log("videos : ", videos);
   return res.render("users/profile", {
     pageTitle: user.name,
     user,
-    videos,
   });
 };
