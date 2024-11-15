@@ -1,3 +1,3 @@
 import "../scss/styles.scss";
 
-alert("hihihi");
+console.log("hello world");
