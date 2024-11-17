@@ -39,13 +39,15 @@ const handleVolumeChange = (event) => {
   video.volume = value;
 };
 
-const handleLoadedMetaData = () => {
-  totalTime.innerText = Math.floor(video.duration);
-};
+const formatTime = (seconds) =>
+  new Date(seconds * 1000).toISOString().substr(11, 8);
+
+function handleLoadedMetaData() {
+  totalTime.innerText = formatTime(Math.floor(video.duration));
+}
 
 const handleTimeUpdate = () => {
-  currenTime.innerText = Math.floor(video.currentTime);
-  console.log(video.currentTime);
+  currenTime.innerText = formatTime(Math.floor(video.currentTime));
 };
 
 playBtn.addEventListener("click", handlePlayClick);
