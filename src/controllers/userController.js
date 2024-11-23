@@ -142,6 +142,7 @@ export const finishGithubLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
+  req.flash("info", "byebyebye;");
   req.session.destroy();
   return res.redirect("/");
 };
@@ -174,6 +175,7 @@ export const postEdit = async (req, res) => {
 
 export const getChangePassword = (req, res) => {
   if (req.session.user.socialOnly) {
+    req.flash("error", "Cantt change password.");
     return res.redirect("/");
   }
   return res.render("users/change-password", { pageTitle: "Change Title" });
@@ -204,6 +206,7 @@ export const postChangePassword = async (req, res) => {
   // save()를 하면 pre save가 작동
   // db에 저장할때 시간이 걸리므로 역시 await 사용
   await user.save();
+  req.flash("info", "Password updated");
   // send notification 'good job'
   return res.redirect("/users/logout");
 };
