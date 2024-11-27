@@ -8,13 +8,11 @@ let recorder;
 let videoFile;
 
 const handleDownload = async () => {
+  /*
   const ffmpeg = createFFmpeg({ log: true });
   await ffmpeg.load();
-
   ffmpeg.FS("writeFile", "recording.webm", await fetchFile(videoFile));
-
   await ffmpeg.run("-i", "recording.webm", "-r", "60", "output.mp4");
-
   await ffmpeg.run(
     "-i",
     "recording.webm",
@@ -32,7 +30,7 @@ const handleDownload = async () => {
 
   const mp4Url = URL.createObjectURL(mp4Blob);
   const thumbUrl = URL.createObjectURL(thumbBlob);
-
+  */
   const a = document.createElement("a");
   a.href = mp4Url;
   a.download = "MyRecording.mp4";
