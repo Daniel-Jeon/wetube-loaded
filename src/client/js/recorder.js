@@ -6,9 +6,9 @@ const video = document.getElementById("preview");
 let stream;
 let recorder;
 let videoFile;
-
+/*
 const handleDownload = async () => {
-  /*
+  
   const ffmpeg = createFFmpeg({ log: true });
   await ffmpeg.load();
   ffmpeg.FS("writeFile", "recording.webm", await fetchFile(videoFile));
@@ -30,7 +30,7 @@ const handleDownload = async () => {
 
   const mp4Url = URL.createObjectURL(mp4Blob);
   const thumbUrl = URL.createObjectURL(thumbBlob);
-  */
+  
   const a = document.createElement("a");
   a.href = mp4Url;
   a.download = "MyRecording.mp4";
@@ -48,7 +48,7 @@ const handleDownload = async () => {
   URL.revokeObjectURL(thumbUrl);
   URL.revokeObjectURL(videoFile);
 };
-
+*/
 const handleStop = () => {
   startBtn.innerText = "Download Recording";
   startBtn.removeEventListener("click", handleStop);
